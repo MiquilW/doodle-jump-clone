@@ -1,0 +1,73 @@
+[gd_scene load_steps=12 format=2]
+
+[ext_resource path="res://Instances/Player.tscn" type="PackedScene" id=1]
+[ext_resource path="res://img/background.png" type="Texture" id=2]
+[ext_resource path="res://Instances/Platform.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Scenes/Camera2D.gd" type="Script" id=4]
+[ext_resource path="res://Scenes/World.gd" type="Script" id=5]
+[ext_resource path="res://Instances/JumpyPlatform.tscn" type="PackedScene" id=6]
+[ext_resource path="res://Scripts/Score.gd" type="Script" id=7]
+[ext_resource path="res://Scenes/ProceduralGeneration.tscn" type="PackedScene" id=8]
+[ext_resource path="res://Instances/BrokenPlatform.tscn" type="PackedScene" id=9]
+[ext_resource path="res://Fonts/KidsDaddy-1GYG2.ttf" type="DynamicFontData" id=10]
+
+[sub_resource type="DynamicFont" id=1]
+size = 44
+outline_size = 1
+outline_color = Color( 0, 0, 0, 1 )
+use_filter = true
+font_data = ExtResource( 10 )
+
+[node name="World" type="Node2D"]
+script = ExtResource( 5 )
+__meta__ = {
+"_edit_vertical_guides_": [ -231.0 ]
+}
+
+[node name="ParallaxBackground" type="ParallaxBackground" parent="."]
+
+[node name="ParallaxLayer" type="ParallaxLayer" parent="ParallaxBackground"]
+motion_mirroring = Vector2( 560, 800 )
+
+[node name="TextureRect" type="TextureRect" parent="ParallaxBackground/ParallaxLayer"]
+margin_left = -275.0
+margin_top = -703.0
+margin_right = 849.0
+margin_bottom = 953.0
+texture = ExtResource( 2 )
+expand = true
+stretch_mode = 2
+
+[node name="Player" parent="." instance=ExtResource( 1 )]
+position = Vector2( -2, -2 )
+camera_path = NodePath("../HUD/Camera2D")
+
+[node name="Platform" parent="." instance=ExtResource( 3 )]
+position = Vector2( 1, 202 )
+
+[node name="HUD" type="CanvasLayer" parent="."]
+layer = 128
+follow_viewport_enable = true
+
+[node name="Camera2D" type="Camera2D" parent="HUD"]
+position = Vector2( 4, 0 )
+current = true
+script = ExtResource( 4 )
+player_path = NodePath("../../Player")
+
+[node name="Score" type="Label" parent="HUD/Camera2D"]
+margin_left = -259.0
+margin_top = -396.0
+margin_right = -101.0
+margin_bottom = -326.0
+custom_fonts/font = SubResource( 1 )
+text = "Score: %s"
+script = ExtResource( 7 )
+player_path = NodePath("../../../Player")
+
+[node name="ProceduralGeneration" parent="." instance=ExtResource( 8 )]
+platform = ExtResource( 3 )
+broken_platform = ExtResource( 9 )
+jumpy = ExtResource( 6 )
+
+[connection signal="instance_node" from="ProceduralGeneration" to="." method="instance_node"]
